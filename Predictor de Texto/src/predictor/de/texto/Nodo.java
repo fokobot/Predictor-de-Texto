@@ -12,11 +12,8 @@ import java.util.ArrayList;
  * @author Fabian Osorio
  */
 public class Nodo {
-    ArrayList<String> letras = new ArrayList<>();
-    Nodo hijo;
+    char letra;
+    ArrayList<Nodo> hijos = new ArrayList<>();
 
-    public Nodo() {
-        this.letras = null;
-        this.hijo = null;
-    }
+
 }

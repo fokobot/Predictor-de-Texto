@@ -91,14 +91,15 @@ public class PredictordeTexto extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
             // TODO add your handling code here:
-            muestraContenido("archivo.txt");
+            CargarArchivo("archivo.txt");
         } catch (IOException ex) {
             Logger.getLogger(PredictordeTexto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    void muestraContenido(String archivo) throws FileNotFoundException, IOException {
+    void CargarArchivo(String archivo) throws FileNotFoundException, IOException {
         String cadena;
+        Nodo raiz = new Nodo();
         FileReader f = new FileReader(archivo);
         BufferedReader b = new BufferedReader(f);
         while ((cadena = b.readLine()) != null) {
@@ -113,10 +114,6 @@ public class PredictordeTexto extends javax.swing.JFrame {
         int tam = cadena.length();
         for (int i = 0; i < tam; i++) {
             char letra = cadena.charAt(i);
-            Nodo raiz = new Nodo();
-            if (raiz.letras == null) {
-                System.out.println("YES");
-            }
             //Tratamiento del caracter
         }
     }
