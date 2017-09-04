@@ -98,14 +98,32 @@ public class PredictordeTexto extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     void muestraContenido(String archivo) throws FileNotFoundException, IOException {
-      String cadena;
-      FileReader f = new FileReader(archivo);
-      BufferedReader b = new BufferedReader(f);
-      while((cadena = b.readLine())!=null) {
-          System.out.println(cadena);
-      }
-      b.close();
-}
+        String cadena;
+        FileReader f = new FileReader(archivo);
+        BufferedReader b = new BufferedReader(f);
+        while ((cadena = b.readLine()) != null) {
+            System.out.println(cadena);
+            descomponerletraporletra(cadena);
+        }
+        b.close();
+        f.close();
+    }
+
+    void descomponerletraporletra(String cadena) {
+        int tam = cadena.length();
+        for (int i = 0; i < tam; i++) {
+            char letra = cadena.charAt(i);
+            Nodo raiz = new Nodo();
+            if (raiz.letras == null) {
+                System.out.println("YES");
+            }
+            //Tratamiento del caracter
+        }
+    }
+
+    void agregaralarbol(char letra, Nodo nodo){
+        
+    }
     /**
      * @param args the command line arguments
      */
