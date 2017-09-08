@@ -5,10 +5,12 @@
  */
 package predictor.de.texto;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,11 +20,21 @@ import java.util.logging.Logger;
  */
 public class PredictordeTexto extends javax.swing.JFrame {
 
+    Nodo raiz;
+
     /**
      * Creates new form PredictordeTexto
      */
     public PredictordeTexto() {
         initComponents();
+        this.getContentPane().setBackground(Color.GRAY);
+        raiz = new Nodo('%');
+        try {
+            // TODO add your handling code here:
+            CargarArchivo("archivo.txt", raiz);
+        } catch (IOException ex) {
+            Logger.getLogger(PredictordeTexto.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -35,23 +47,30 @@ public class PredictordeTexto extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        Entrada = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        Prediccion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(0, 0, 255));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
+        jLabel1.setFont(new java.awt.Font("Franklin Gothic Book", 0, 14)); // NOI18N
         jLabel1.setText("Escriba su Palabra:");
 
-        jLabel2.setText("Prediccion:");
-
-        jButton1.setText("Cargar Archivo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        Entrada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                EntradaActionPerformed(evt);
             }
         });
+        Entrada.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                EntradaKeyReleased(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Franklin Gothic Book", 0, 14)); // NOI18N
+        jLabel2.setText("Prediccion:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -60,15 +79,15 @@ public class PredictordeTexto extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(44, 44, 44)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
-                    .addComponent(jTextField2))
-                .addGap(32, 32, 32)
-                .addComponent(jButton1)
-                .addContainerGap(27, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Entrada, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(42, 42, 42)
+                        .addComponent(Prediccion, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -76,51 +95,132 @@ public class PredictordeTexto extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(29, 29, 29)
+                    .addComponent(Entrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(202, Short.MAX_VALUE))
+                    .addComponent(Prediccion, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(165, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            // TODO add your handling code here:
-            CargarArchivo("archivo.txt");
-        } catch (IOException ex) {
-            Logger.getLogger(PredictordeTexto.class.getName()).log(Level.SEVERE, null, ex);
+    private void EntradaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_EntradaKeyReleased
+        // TODO add your handling code here:
+        String texto = Entrada.getText();
+        int tam = texto.length();
+        if (tam == 0) {
+            Prediccion.setText("No hay predicciones para el texto escrito");
+        } else {
+            String prediccion = buscarpalabrasenarbol(texto, raiz, tam);
+            Prediccion.setText(prediccion);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
 
-    void CargarArchivo(String archivo) throws FileNotFoundException, IOException {
+    }//GEN-LAST:event_EntradaKeyReleased
+
+    private void EntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EntradaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_EntradaActionPerformed
+
+    String buscarpalabrasenarbol(String texto, Nodo nodo, int tam) {
+        String prediccion = "";
+        String resto;
+        boolean enc = false;
+        Nodo comparar;
+        int i = 0;
+        while (i < tam && enc == false) {
+            char letra = texto.charAt(i);
+            comparar = sacarpalabra(letra, nodo);
+            if (comparar != nodo) {
+                prediccion = prediccion + letra;
+                nodo = comparar;
+            } else {
+                if (prediccion != "") {
+                    enc = true;
+                    resto = completarpalabra(nodo);
+                    prediccion = prediccion + resto;
+                }
+            }
+            i++;
+            if (i == tam && nodo.letra != '$' && enc == false && prediccion != "") {
+                resto = completarpalabra(nodo);
+                prediccion = prediccion + resto;
+            }
+        }
+        return prediccion;
+    }
+
+    Nodo sacarpalabra(char letra, Nodo nodo) {
+        boolean enc = true;
+        int i = 0;
+        int tam = nodo.hijos.size();
+        while (i < tam && enc == true) {
+            if (nodo.hijos.get(i).letra == letra) {
+                enc = false;
+                nodo = nodo.hijos.get(i);
+            }
+            i++;
+        }
+        return nodo;
+    }
+
+    String completarpalabra(Nodo nodo) {
+        String resto = "";
+        while (nodo.hijos.get(0).letra != '$') {
+            resto = resto + nodo.hijos.get(0).letra;
+            nodo = nodo.hijos.get(0);
+        }
+        return resto;
+    }
+
+    void CargarArchivo(String archivo, Nodo nodo) throws FileNotFoundException, IOException {
         String cadena;
-        Nodo raiz = new Nodo();
         FileReader f = new FileReader(archivo);
         BufferedReader b = new BufferedReader(f);
         while ((cadena = b.readLine()) != null) {
-            System.out.println(cadena);
-            descomponerletraporletra(cadena);
+            descomponerletraporletra(cadena, nodo);
         }
         b.close();
         f.close();
     }
 
-    void descomponerletraporletra(String cadena) {
+    void descomponerletraporletra(String cadena, Nodo nodo) {
         int tam = cadena.length();
         for (int i = 0; i < tam; i++) {
             char letra = cadena.charAt(i);
+            nodo = agregaralarbol(letra, nodo, 0);
             //Tratamiento del caracter
+
         }
+        nodo = agregaralarbol('$', nodo, 0);
     }
 
-    void agregaralarbol(char letra, Nodo nodo){
-        
+    Nodo agregaralarbol(char letra, Nodo nodo, int i) {
+        Nodo nuevo = new Nodo(letra);
+        boolean enc = false;
+        if (nodo.hijos.size() == 0) {
+            nodo.hijos.add(nuevo);
+            nodo = nodo.hijos.get(i);
+        } else {
+            int tam = nodo.hijos.size();
+            int j = 0;
+            while (j < tam && enc == false) {
+                if (nodo.hijos.get(j).letra == letra) {
+
+                    enc = true;
+                    nodo = nodo.hijos.get(j);
+                }
+                j++;
+            }
+            if (enc == false) {
+                nodo.hijos.add(nuevo);
+                nodo = nodo.hijos.get(tam);
+            }
+        }
+        return nodo;
     }
+
     /**
      * @param args the command line arguments
      */
@@ -157,10 +257,9 @@ public class PredictordeTexto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JTextField Entrada;
+    private javax.swing.JLabel Prediccion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }

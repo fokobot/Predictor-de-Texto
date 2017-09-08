@@ -15,5 +15,9 @@ public class Nodo {
     char letra;
     ArrayList<Nodo> hijos = new ArrayList<>();
 
+    public Nodo(char letra) {
+        this.letra = letra;
+    }
+
 
 }
